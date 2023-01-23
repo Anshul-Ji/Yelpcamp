@@ -18,13 +18,16 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
+const MongoStore = require('connect-mongo');
+const MongoDBStore = require("connect-mongo")(session);
 const dbUrl = process.env.DB_URL;
 const localDbUrl = 'mongodb://127.0.0.1:27017/yelp-camp';
+
 
 // console.log("Key: ", process.env.CLOUDINARY_KEY);
 
 mongoose.set('strictQuery', true);
-mongoose.connect(dbUrl)
+mongoose.connect(localDbUrl)
     .then(() => {
         console.log("MONGO CONNECTION OPEN!!!")
     })
@@ -43,7 +46,18 @@ app.use(methodOverride('_method'))
 
 app.use(express.static(path.join(__dirname,'public')));
 
+const store = new MongoDBStore({
+    url: localDbUrl,
+    secret: 'notagoodsecret',
+    touchAfter: 24 * 60 * 60 // seconds
+});
+
+store.on("error", function(e){
+    console.log("SESSION STORE ERROR", e);
+})
+
 const sessionConfig = {
+    store,
     secret: 'badSecret',
     cookie: {
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,

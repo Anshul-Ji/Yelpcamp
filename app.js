@@ -18,13 +18,13 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
-
-
+const dbUrl = process.env.DB_URL;
+const localDbUrl = 'mongodb://127.0.0.1:27017/yelp-camp';
 
 // console.log("Key: ", process.env.CLOUDINARY_KEY);
 
 mongoose.set('strictQuery', true);
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp')
+mongoose.connect(dbUrl)
     .then(() => {
         console.log("MONGO CONNECTION OPEN!!!")
     })

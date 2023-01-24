@@ -42,20 +42,20 @@ expo.createCampground = async (req, res) => {
     const {title, city, state, price, description} = req.body;
     const location = `${city}, ${state}`;
     const camp = new Campground({title, location, price, description});
-    
+
     const geoData = await geoCoder.forwardGeocode({
         query: location,
         limit: 1
     }).send();
-    console.log(geoData.body.features[0].geometry.coordinates);
-    res.send("OK");
-    // camp.images = req.files.map(f => ({url: f.path, fileName: f.filename}));
-    // camp.author = req.user._id;
-    // await camp.save();
-    // console.log(camp.images);
-    // console.log(camp);
-    // req.flash('success', 'Successfully made a new camp.')
-    // res.redirect(`/campgrounds/${camp._id}`);
+    camp.geometry = geoData.body.features[0].geometry; 
+
+    camp.images = req.files.map(f => ({url: f.path, fileName: f.filename}));
+    camp.author = req.user._id;
+    await camp.save();
+    console.log(camp.images);
+    console.log(camp);
+    req.flash('success', 'Successfully made a new camp.')
+    res.redirect(`/campgrounds/${camp._id}`);
 }
 
 expo.editCampground = async (req, res) => {

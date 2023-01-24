@@ -1,3 +1,4 @@
+const { number } = require('joi');
 const mongoose = require('mongoose')
 const Review = require('./review');
 const Schema = mongoose.Schema;
@@ -16,6 +17,17 @@ const CampgroundSchema = new Schema({
     title: {
         type: String,
         // required: true
+    },
+    geometry: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
     },
     images: [ImageSchema],
     price: {
